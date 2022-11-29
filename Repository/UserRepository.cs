@@ -21,11 +21,12 @@ namespace TreinamentoMarinho.Repository
                 {
                     users.Add(new UserEntity()
                     {
-                        Cd_usuario = (int)row["CD_USUARIO"],
-                        St_name = (string)row["ST_NAME"],
-                        St_email = (string)row["ST_EMAIL"],
-                        St_login = (string)row["ST_LOGIN"],
-                        St_password = (string)row["ST_PASSWORD"]
+                        Cd_usuario = Convert.ToInt32(row["CD_USUARIO"]),
+                        St_role = Convert.ToString(row["ST_ROLE"]),
+                        St_name = Convert.ToString(row["ST_NAME"]),
+                        St_email = Convert.ToString(row["ST_EMAIL"]),
+                        St_login = Convert.ToString(row["ST_LOGIN"]),
+                        St_password = Convert.ToString(row["ST_PASSWORD"])
                     });
                 }
                 return users;
@@ -47,11 +48,12 @@ namespace TreinamentoMarinho.Repository
 				{
 					user = new UserEntity()
 					{
-						Cd_usuario = (int)row["CD_USUARIO"],
-						St_name = (string)row["ST_NAME"],
-                        St_email = (string)row["ST_EMAIL"],
-                        St_login = (string)row["ST_LOGIN"],
-                        St_password = (string)row["ST_PASSWORD"]
+						Cd_usuario = Convert.ToInt32(row["CD_USUARIO"]),
+                        St_role = Convert.ToString(row["ST_ROLE"]),
+                        St_name = Convert.ToString(row["ST_NAME"]),
+                        St_email = Convert.ToString(row["ST_EMAIL"]),
+                        St_login = Convert.ToString(row["ST_LOGIN"]),
+                        St_password = Convert.ToString(row["ST_PASSWORD"])
                     };
 				}
                 if (result.Rows.Count == 0)
@@ -78,6 +80,7 @@ namespace TreinamentoMarinho.Repository
 				string query = $@"INSERT INTO USERS VALUES (
 									'{entity.St_name}',
 									'{entity.Cd_usuario}',
+									'{entity.St_role}',
 									'{entity.St_email}',
 									'{entity.St_login}',
 									'{passHash}',
@@ -95,11 +98,13 @@ namespace TreinamentoMarinho.Repository
 		{
 			try
 			{
+                var passHash = new Utilities().GenerateHash(entity.St_login, entity.St_password);
                 string query = $@"UPDATE USERS SET 
-							St_name = '{entity.St_name}',
-							St_email = '{entity.St_email}',
-							St_login = '{entity.St_login}',
-							St_password = '{entity.St_password}'
+							ST_NAME = '{entity.St_name}',
+							ST_ROLE = '{entity.St_role}',
+							ST_EMAIL = '{entity.St_email}',
+							ST_LOGIN = '{entity.St_login}',
+							ST_PASSWORD = '{passHash}'
 								where CD_USUARIO = '{entity.Cd_user}'";
                 ExecCommand(query);
             }

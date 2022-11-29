@@ -1,36 +1,43 @@
 ﻿using System.Data;
 using TreinamentoMarinho.Entities;
+using TreinamentoMarinho.Utils;
 
 namespace TreinamentoMarinho.Repository
 {
     public class LoginRepository:BaseRepository
     {
-        public bool Login(UserEntityValidation entity)
+        public UserEntity Login(UserEntityValidation entity)
         {
             try
             {
-                string query = $@"SELECT * FROM USERS WHERE ST_LOGIN = '{entity.St_login}'
-                                AND ST_PASSWORD = '{entity.St_password}' AND DT_DELETE IS NULL";
+                string hashPass = new Utilities().GenerateHash(entity.St_login, entity.St_password);
 
+                string query = $@"SELECT * FROM USERS WHERE ST_LOGIN = '{entity.St_login}'
+                                AND ST_PASSWORD = '{hashPass}' AND DT_DELETE IS NULL";
+
+                UserEntity user = new UserEntity();
                 DataTable result = ExecQuery(query);
-                UserEntityValidation user = new UserEntityValidation();
-                foreach (DataRow row in result.Rows)
-                {
-                    user = new UserEntityValidation()
-                    {
-                        St_login = (string)row["ST_LOGIN"],
-                        St_password = (string)row["ST_PASSWORD"]
-                    };
-                }
+
                 if (result.Rows.Count == 0)
                 {
-                    return false;
+                    return null;
                 }
                 else
                 {
-                    return true;
+                    foreach (DataRow row in result.Rows)
+                    {
+                        user = new UserEntity()
+                        {
+                            Cd_usuario = Convert.ToInt32(row["CD_USUARIO"]),
+                            St_role = Convert.ToString(row["ST_ROLE"]),
+                            St_name = Convert.ToString(row["ST_NAME"]),
+                            St_email = Convert.ToString(row["ST_EMAIL"]),
+                            St_login = Convert.ToString(row["ST_LOGIN"]),
+                            St_password = Convert.ToString(row["ST_PASSWORD"])
+                        };
+                    }
+                    return user;
                 }
- 
             }
             catch (Exception ex)
             {

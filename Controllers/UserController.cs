@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TreinamentoMarinho.Entities;
 using TreinamentoMarinho.Repository;
@@ -14,7 +15,7 @@ namespace TreinamentoMarinho.Controllers
         {
             try
             {
-                if(id > 0)
+                if (id > 0)
                 {
                     UserEntity result = new UserRepository().GetById(id);
                     return result != null ? Ok(result) : StatusCode(404, "Nenhum resultado encontrado");
@@ -24,7 +25,6 @@ namespace TreinamentoMarinho.Controllers
                     List<UserEntity> result = new UserRepository().GetAll();
                     return Ok(result);
                 }
-                
             }
             catch (Exception ex)
             {
@@ -32,6 +32,7 @@ namespace TreinamentoMarinho.Controllers
             }
         }
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public ActionResult<string> Save([FromBody] UserEntity body) // forma de pegar conteudo de um body;
         {
             try
@@ -46,6 +47,7 @@ namespace TreinamentoMarinho.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Administrador, User")]
         public ActionResult<string> Update([FromBody] UserEntity body)
         {
             try
@@ -59,6 +61,7 @@ namespace TreinamentoMarinho.Controllers
             }
         }
         [HttpDelete]
+        [Authorize(Roles = "Administrador")]
         public ActionResult Delete(int id, int id_user)
         {
             try

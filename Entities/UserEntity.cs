@@ -11,6 +11,8 @@
         public string? St_login { get; set; }
 
         public string? St_password { get; set; }
+
+        public string? St_role { get; set; }
     }
 
     public class UserEntityValidation
